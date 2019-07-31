@@ -16,17 +16,30 @@ class TripBuilder
 	}
 
 	/**
-	 * List all available flights.
+	 * List available flights.
 	 * @param string $airport_departure Code of daparture airport
 	 * @param string $airport_arrival Code of arrival airport
 	 * @param string $time_departure 7am="0700" 2:30pm="1430" midnight="0000"
-	 * @return string JSON
+	 * @return object[]
 	 */
 	public function listFlights($airport_departure, $airport_arrival, $time_departure)
 	{
-		return json_encode($this->dao->getDailyFlights(
-			$airport_departure, $airport_arrival, (int)ltrim($time_departure, '0')));
+		return $this->dao->getDailyFlights(
+			$airport_departure, $airport_arrival, (int)ltrim($time_departure, '0'));
 	}
 
-	//TODO: public function findRoundTrip() {}
+	/**
+	 * List all airports.
+	 * @return string[]
+	 */
+	public function listAirports()
+	{
+		return $this->dao->getAirports();
+	}
+
+	public function bookTrips($flights)
+	{
+		//TODO...
+		print_r($flights);
+	}
 }

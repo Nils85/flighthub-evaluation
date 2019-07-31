@@ -44,6 +44,16 @@ class DataAccess
 		return $statement->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	public function getAirports()
+	{
+		$airports = array();
+
+		foreach ($this->pdo->query('select Code,Name,City from Airport') as $row)
+		{ $airports[] = $row['Code'] . ' - ' . $row['Name'] . ' (' . $row['City'] . ')'; }
+
+		return $airports;
+	}
+
 	private function createTables()
 	{
 		$this->pdo->exec('create table Airline ('
@@ -54,6 +64,7 @@ class DataAccess
 			. 'Code char(3) primary key,'
 			. 'CityCode char(3) not null,'
 			. 'Name varchar(255) not null,'
+			. 'City varchar(255) not null,'
 			. 'CountryCode char(2) not null,'
 			. 'RegionCode char(2) not null,'
 			. 'Latitude varchar(255) not null,'
@@ -77,15 +88,15 @@ class DataAccess
 
 		// Sample data
 
-		$this->pdo->exec("insert into Airline values ('AC', 'Air Canada')");
+		$this->pdo->exec("insert into Airline values ('AC','Air Canada')");
 
-		$this->pdo->exec("insert into Airport values ('YUL', 'YMQ', 'Pierre Elliott Trudeau International',"
-			. "'Montreal', 'CA', 'QC', '45.457714', '-73.749908', 'America/Montreal')");
+		$this->pdo->exec("insert into Airport values ('YUL','YMQ','Pierre Elliott Trudeau International',"
+			. "'Montreal','CA','QC','45.457714','-73.749908','America/Montreal')");
 
-		$this->pdo->exec("insert into Airport values ('YVR', 'YVR', 'Vancouver International',"
-			. "'Vancouver', 'CA', 'BC', '49.194698', '-123.179192', 'America/Vancouver')");
+		$this->pdo->exec("insert into Airport values ('YVR','YVR','Vancouver International',"
+			. "'Vancouver','CA','BC','49.194698','-123.179192','America/Vancouver')");
 
-		$this->pdo->exec("insert into Flight values ('AC301', 'AC', 301, 'YUL', 735, 'YVR', 1005, '273.23')");
-		$this->pdo->exec("insert into Flight values ('AC302', 'AC', 302, 'YVR', 1130, 'YUL', 1911, '220.63')");
+		$this->pdo->exec("insert into Flight values ('AC301','AC',301,'YUL',735,'YVR',1005,'273.23')");
+		$this->pdo->exec("insert into Flight values ('AC302','AC',302,'YVR',1130,'YUL',1911,'220.63')");
 	}
 }

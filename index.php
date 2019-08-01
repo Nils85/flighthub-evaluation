@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<!--
-TODO: change extension from php to html when debugging is complete
--->
 <html>
 <head>
-	<title>Frontend</title>
+	<title>Debugging Frontend</title>
 	<meta charset="UTF-8">
 </head>
 <body>
@@ -21,7 +18,7 @@ TODO: change extension from php to html when debugging is complete
 	</form></p>
 	<p><form action="api/book_trip.php" method="post" enctype="multipart/form-data">
 		<label for="txtbox0">Book a trip (POST JSON)</label><br/>
-		<textarea id="txtbox0" name="flights">["AC381","AC382"]</textarea>
+		<textarea id="txtbox0" name="flights">{"AC301":"20190731","AC302":"20190801"}</textarea>
 		<br/><input type="submit"/>
 	</form></p>
 </body>

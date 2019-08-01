@@ -2,10 +2,9 @@
 /**
  * RESTful web service for a one-way trip or a round-trip.
  * method: POST JSON
- * param flights: [{"Date":"...",...}{...}]
+ * param flights: { "AC301":"20190731", "AC302":"20190801", ... }
  * return: Text (confirmation message)
  * @api
- * @todo A trip MUST depart after creation time at the earliest or 365 days after creation time at the latest
  */
 $flights = filter_input(INPUT_POST, 'flights');
 header('Content-Type: text/plain');
@@ -23,7 +22,7 @@ if ($flights == false)  // or null
 try
 {
 	$trip = new TripBuilder\TripBuilder();
-	$trip->bookTrips(json_decode($flights));
+	$trip->bookTrip(json_decode($flights, true));
 	echo 'OK';
 }
 catch (Exception $ex)

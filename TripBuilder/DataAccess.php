@@ -3,7 +3,7 @@ namespace TripBuilder;
 use PDO;
 
 /**
- * Database access.
+ * Database access (compatible with SQLite, MySQL, PostgreSQL, MS SQL Server, Oracle...)
  * @author Vincent Boursier <vincent.boursier@gmail.com>
  */
 class DataAccess
@@ -19,13 +19,13 @@ class DataAccess
 	}
 
 	/**
-	 * Get all flights corresponding.
+	 * Get flights corresponding with criteria.
 	 * @param string $airport_departure
 	 * @param string $airport_arrival
 	 * @param int $time_departure 7am=700 2:30pm=1430 midnight=0
 	 * @return object[] Flights informations
 	 */
-	public function getDailyFlights($airport_departure, $airport_arrival, $time_departure)
+	public function getFlights($airport_departure, $airport_arrival, $time_departure)
 	{
 		$sql = 'select * from Flight where DepartureAirport=? and ArrivalAirport=? and DepartureTime >= ?';
 		$statement = $this->pdo->prepare($sql);
@@ -44,16 +44,46 @@ class DataAccess
 		return $statement->fetchAll(PDO::FETCH_OBJ);
 	}
 
+	public function getFlight($id)
+	{
+		static $prepared_statement = false;
+
+		if (!$prepared_statement)
+		{ $prepared_statement = $this->pdo->prepare('select * from Flight where ID=?'); }
+
+		$prepared_statement->bindValue(1, $id, PDO::PARAM_STR);
+		$prepared_statement->execute();
+
+		$row = $prepared_statement->fetch(PDO::FETCH_ASSOC);
+		$prepared_statement->closeCursor();
+		return $row;
+	}
+
+	/**
+	 * Get all airports in the database.
+	 * @return string[] "Code - Airport name (City)"
+	 */
 	public function getAirports()
 	{
 		$airports = array();
+		$sql = 'select Code,Name,City from Airport';
+		$statement = $this->pdo->query($sql);
 
-		foreach ($this->pdo->query('select Code,Name,City from Airport') as $row)
+		if ($statement == false)  // or null
+		{
+			$this->createTables();
+			$statement = $this->pdo->query($sql);
+		}
+
+		foreach ($statement as $row)
 		{ $airports[] = $row['Code'] . ' - ' . $row['Name'] . ' (' . $row['City'] . ')'; }
 
 		return $airports;
 	}
 
+	/**
+	 * Initialize tables for the first time and fill it with some data.
+	 */
 	private function createTables()
 	{
 		$this->pdo->exec('create table Airline ('

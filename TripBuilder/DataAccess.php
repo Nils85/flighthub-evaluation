@@ -65,17 +65,23 @@ class DataAccess
 
 	/**
 	 * Get all airports in the database.
-	 * @return string[] "Code - Airport name (City)"
+	 * @return array Rows with columns 0=>Code 1=>Name 2=>City
 	 */
 	public function getAirports()
 	{
-		$airports = array();
-		$statement = $this->pdo->query('select Code,Name,City from Airport');
+		$statement = $this->pdo->query('select Airport.Code,Airport.Name,Airport.City from Airport');
+		return $statement->fetchAll(PDO::FETCH_NUM);
+	}
 
-		foreach ($statement as $row)
-		{ $airports[] = $row['Code'] . ' - ' . $row['Name'] . ' (' . $row['City'] . ')'; }
+	public function getConnections($from_airport)
+	{
+		$statement = $this->pdo->prepare('select distinct Airport.Code,Airport.Name,Airport.City from Flight'
+			. ' inner join Airport on Flight.ArrivalAirport=Airport.Code where Flight.DepartureAirport=?');
 
-		return $airports;
+		$statement->bindValue(1, $from_airport, PDO::PARAM_STR);
+		$statement->execute();
+
+		return $statement->fetchAll(PDO::FETCH_NUM);
 	}
 
 	public function addTrip($creation_time, $flight_id, $date_departure)

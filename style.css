@@ -1,0 +1,17 @@
+body, a {
+	font-family: sans-serif;
+	text-decoration: none}
+
+a:hover {
+	text-decoration: underline}
+
+p {
+	padding: 9px}
+
+p.z {
+	background-color: black;
+	color: white}
+
+p.z a {
+	margin-left: 15%;
+	color: white}

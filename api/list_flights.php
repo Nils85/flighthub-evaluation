@@ -17,6 +17,8 @@ spl_autoload_register(function($class_name) {
 	require '../' . str_replace('\\', '/', $class_name) . '.php';
 });
 
+register_shutdown_function('TripBuilder\\TripBuilder::phpErrorHandler');
+
 try
 {
 	$trip = new TripBuilder\TripBuilder();

@@ -36,11 +36,22 @@ class TripBuilder
 
 	/**
 	 * List all airports.
+	 * @param string $from Airport
 	 * @return string[]
 	 */
-	public function listAirports()
+	public function listAirports($from = '')
 	{
-		return $this->dao->getAirports();
+		$airports = array();
+
+		if (empty($from))
+		{ $rows = $this->dao->getAirports(); }
+		else
+		{ $rows = $this->dao->getConnections($from); }
+
+		foreach ($rows as $row)
+		{ $airports[] = $row[0] . ' - ' . $row[1] . ' (' . $row[2] . ')'; }
+
+		return $airports;
 	}
 
 	/**

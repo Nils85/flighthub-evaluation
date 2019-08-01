@@ -7,8 +7,22 @@
 	<script defer src="ES5.js"></script>
 </head>
 <body>
-	<div>
-		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug">Debug page</a>
-	</div>
+	<p class="z">
+		<b>Trip Builder</b>
+		<a href="index.html" style="text-decoration:underline">Book flight(s)</a>
+		<a href="trips.html">Trip list</a>
+		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug"><i>Debug</i></a>
+	</p>
+	<p>
+		<label for="a1">From:</label>
+		<select id="a1" onchange="fillListAirports('b1',this.value.substr(0,3))">
+			<option value="">Select an airport</option>
+		</select>
+		<label for="b1">To:</label>
+		<select id="b1"></select>
+		<label for="c1">Date:</label>
+		<input type="text" id="c1"/>
+		<input type="button" value="See daily flights" onclick=""/>
+	</p>
 </body>
 </html>

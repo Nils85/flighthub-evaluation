@@ -1,5 +1,8 @@
 <?php
 namespace TripBuilder;
+use DateTime;
+use DateInterval;
+use Exception;
 
 /**
  * Trip builder.
@@ -24,6 +27,9 @@ class TripBuilder
 	 */
 	public function listFlights($airport_departure, $airport_arrival, $time_departure)
 	{
+		if ($airport_departure == '' || $airport_arrival == '' || $time_departure == '')
+		{ throw new Exception('all parameters are needed'); }
+
 		return $this->dao->getFlights(
 			$airport_departure, $airport_arrival, (int)ltrim($time_departure, '0'));
 	}
@@ -39,32 +45,54 @@ class TripBuilder
 
 	/**
 	 * Book a new trip for a single passenger.
+	 * A trip MUST depart after creation time at the earliest or 365 days after creation time at the latest
 	 * @param array $flights [Flight ID => Departure date]
 	 * @return string Message
-	 * @todo A trip MUST depart after creation time at the earliest or 365 days after creation time at the latest
+	 * @throws Exception
 	 * @todo Be mindful of timezones!
 	 */
 	public function bookTrip($flights)
 	{
+		if (!is_array($flights) || empty($flights))
+		{ throw new Exception('No data received...'); }
+
 		date_default_timezone_set('UTC');
-		$last_arrival = $time();  // Creation time
+		$creation_time = new DateTime();
+
+		//$first_flight = array_key_first($flights);
+		foreach ($flights as $key => $value)
+		{
+			$first_flight = $key;
+			break;
+		}
+
+		$departure = DataAccess::intToDateTime(
+			$flights[$first_flight], $this->dao->getFlight($first_flight)['DepartureTime']);
+
+		if ($departure <= $creation_time)
+		{ return 'Too late! Your first flight is already gone.';}
+
+		if ($creation_time->add(new DateInterval('P365D')) < $departure)
+		{ return 'Impossible to book a trip more than 1 year in advance!';}
+
+		$price = 0;
+		$creation_time = $creation_time->getTimestamp();
 
 		foreach ($flights as $flight_id => $departure_date)
 		{
-			$flight_infos = $this->dao->getFlight($flight_id);
-
-			//TODO...
-			$last_arrival = mktime(
-				substr($flight_infos['ArrivalTime'],0),
-				substr($flight_infos['ArrivalTime'],0),
-				0,
-				substr($departure_date,4,2),
-				substr($departure_date,-2),
-				substr($departure_date,0,4));
+			$price += $this->dao->getFlight($first_flight)['Price'];
+			$this->dao->addTrip($creation_time, $flight_id, $departure_date);
 		}
 
+		return 'Ok, total price = ' . $price;
+	}
 
-
-		print_r($flights);
+	static function phpErrorHandler()
+	{
+		if (error_get_last() != null)
+		{
+			http_response_code(500);
+			echo 'Internal Server Error';
+		}
 	}
 }

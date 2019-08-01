@@ -17,13 +17,6 @@ spl_autoload_register(function($class_name) {
 	require '../' . str_replace('\\', '/', $class_name) . '.php';
 });
 
-if ($from == '' || $to == '' || $time == '')
-{
-	http_response_code(400);
-	echo 'Bad Request';
-	exit;
-}
-
 try
 {
 	$trip = new TripBuilder\TripBuilder();
@@ -31,6 +24,6 @@ try
 }
 catch (Exception $ex)
 {
-	http_response_code(500);
-	echo 'Internal Server Error: ', $ex->getMessage();
+	http_response_code(400);
+	echo 'Bad Request: ', $ex->getMessage();
 }

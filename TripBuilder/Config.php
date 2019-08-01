@@ -6,7 +6,7 @@ class Config {
 const
 
 # Database Source Name (PDO DSN)
-DB_SOURCE = 'sqlite:C:/Users/Vince/Desktop/TripBuilder.db',
+DB_SOURCE = 'sqlite:../TripBuilder.db',
 # Examples :
 # MySQL socket --> 'mysql:unix_socket=/var/run/mysqld/mysqld.sock;dbname=TripBuilder'
 # MySQL TCP/IP --> 'mysql:host=localhost;port=3306;dbname=TripBuilder'

@@ -18,7 +18,7 @@
 	</form></p>
 	<p><form action="api/book_trip.php" method="post" enctype="multipart/form-data">
 		<label for="txtbox0">Book a trip (POST JSON)</label><br/>
-		<textarea id="txtbox0" name="flights">{"AC301":"20190731","AC302":"20190801"}</textarea>
+		<textarea id="txtbox0" name="flights">{"AC301":"20190831","AC302":"20190901"}</textarea>
 		<br/><input type="submit"/>
 	</form></p>
 </body>

@@ -12,21 +12,15 @@ header('Content-Type: text/plain');
 function __autoload($class_name)
 { require '../' . str_replace('\\', '/', $class_name) . '.php'; }
 
-if ($flights == false)  // or null
-{
-	http_response_code(400);
-	echo 'Bad Request';
-	exit;
-}
+register_shutdown_function('TripBuilder\\TripBuilder::phpErrorHandler');
 
 try
 {
 	$trip = new TripBuilder\TripBuilder();
-	$trip->bookTrip(json_decode($flights, true));
-	echo 'OK';
+	echo $trip->bookTrip(json_decode($flights, true));
 }
 catch (Exception $ex)
 {
-	http_response_code(500);
-	echo 'Internal Server Error: ', $ex->getMessage();
+	http_response_code(400);
+	echo 'Bad Request: ', $ex->getMessage();
 }

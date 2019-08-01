@@ -17,6 +17,6 @@ try
 }
 catch (Exception $ex)
 {
-	http_response_code(500);
-	echo 'Internal Server Error: ', $ex->getMessage();
+	http_response_code(400);
+	echo 'Bad Request: ', $ex->getMessage();
 }

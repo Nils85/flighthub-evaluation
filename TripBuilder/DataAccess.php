@@ -92,7 +92,7 @@ class DataAccess
 
 		$prepared_statement->bindValue(1, $creation_time, PDO::PARAM_INT);
 		$prepared_statement->bindValue(2, $flight_id, PDO::PARAM_STR);
-		$prepared_statement->bindValue(3, $date_departure, PDO::PARAM_INT);
+		$prepared_statement->bindValue(3, $date_departure, PDO::PARAM_STR);
 		$prepared_statement->execute();
 	}
 

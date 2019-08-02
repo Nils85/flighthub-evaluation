@@ -55,28 +55,21 @@ class TripBuilder
 	/**
 	 * Book a new trip for a single passenger.
 	 * A trip MUST depart after creation time at the earliest or 365 days after creation time at the latest
-	 * @param array $flights [Flight ID => Departure date]
+	 * @param object[] $flights [(Flight ID, Departure date)]
 	 * @return string Message
 	 * @throws Exception
 	 * @todo Be mindful of timezones!
 	 */
 	public function bookTrip($flights)
 	{
-		if (!is_array($flights) || empty($flights))
+		if (!is_array($flights))
 		{ throw new Exception('No data received...'); }
 
 		date_default_timezone_set('UTC');
 		$creation_time = new DateTime();
 
-		//$first_flight = array_key_first($flights);
-		foreach ($flights as $key => $value)
-		{
-			$first_flight = $key;
-			break;
-		}
-
 		$departure = new DateTime(
-			$flights[$first_flight] . ' '. $this->dao->getFlight($first_flight)['DepartureTime']);
+			$flights[0]->date . ' ' . $this->dao->getFlight($flights[0]->flight)['DepartureTime']);
 
 		if ($departure <= $creation_time)
 		{ return 'Too late! Your first flight is already gone.';}
@@ -87,13 +80,13 @@ class TripBuilder
 		$price = 0;
 		$creation_time = $creation_time->getTimestamp();
 
-		foreach ($flights as $flight_id => $departure_date)
+		foreach ($flights as $flight)
 		{
-			$price += $this->dao->getFlight($first_flight)['Price'];
-			$this->dao->addTrip($creation_time, $flight_id, $departure_date);
+			$price += $this->dao->getFlight($flight->flight)['Price'];
+			$this->dao->addTrip($creation_time, $flight->flight, $flight->date);
 		}
 
-		return 'Ok, total price = ' . $price;
+		return 'Ok, your trip number is ' . $creation_time . '. Total price=' . $price;
 	}
 
 	static function phpErrorHandler()

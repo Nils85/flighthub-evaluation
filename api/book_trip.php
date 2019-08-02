@@ -2,7 +2,7 @@
 /**
  * RESTful web service for a one-way trip or a round-trip.
  * method: POST JSON
- * param flights: { "AC301":"20190731", "AC302":"20190801", ... }
+ * param flights: [{"flight":"AC301","date":"2019-12-31"},{"flight":"AC302","date":"2019-12-31"}...]
  * return: Text (confirmation message)
  * @api
  */
@@ -17,7 +17,7 @@ register_shutdown_function('TripBuilder\\TripBuilder::phpErrorHandler');
 try
 {
 	$trip = new TripBuilder\TripBuilder();
-	echo $trip->bookTrip(json_decode($flights, true));
+	echo $trip->bookTrip(json_decode($flights));
 }
 catch (Exception $ex)
 {

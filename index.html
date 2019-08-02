@@ -47,7 +47,8 @@
 		<table id="e4"></table>
 	</div>
 	<p class="y">
-		<input type="button" value="Book selected flights" onclick=""/>
+		<input type="button" value="Book selected flights" onclick="bookTrip()"/>
+		<span id="f"></span>
 	</p>
 	<script>
 		'use strict';  // ES5
@@ -72,8 +73,8 @@
 				{
 					var list = JSON.parse(this.responseText);
 
-					for (var item of list)
-					{ htm += '<option value="' + item.substr(0,3) + '">' + item + '</option>'; }
+					for (var index in list)
+					{ htm += '<option value="' + list[index].substr(0,3) + '">' + list[index] + '</option>'; }
 
 					selectA.innerHTML = htm;
 					selectB.innerHTML = htm;
@@ -99,8 +100,8 @@
 				{
 					var list = JSON.parse(this.responseText);
 
-					for (var item of list)
-					{ htm += '<option value="' + item.substr(0,3) + '">' + item + '</option>'; }
+					for (var index in list)
+					{ htm += '<option value="' + list[index].substr(0,3) + '">' + list[index] + '</option>'; }
 
 					select.innerHTML = htm;
 				}
@@ -154,8 +155,9 @@
 				{
 					var flights = JSON.parse(this.responseText);
 
-					for (var flight of flights)
+					for (var index in flights)
 					{
+						var flight = flights[index];
 						htm += '<tr><td><input type="radio" name="flight_' + divID
 							+ '" value="' + flight.ID
 							+ '">Flight ' + flight.ID
@@ -170,6 +172,36 @@
 			};
 
 			xhr.send();
+		}
+
+		function bookTrip()
+		{
+			var xhr = new XMLHttpRequest();
+			var flights = [];
+			var divIDs = {a:0,b:0,c:0,d:0,e:0};
+
+			for (var divID in divIDs)
+			{
+				var radios = document.getElementsByName('flight_' + divID);
+				for (var index in radios)
+				{
+					if (radios[index].checked)
+					{
+						flights.push(
+							{flight: radios[index].value, date: document.getElementById(divID + '3').value});
+					}
+				}
+			}
+
+			xhr.open('POST', '/api/book_trip.php', true);
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200)
+				{ document.getElementById('f').innerHTML = this.responseText; }
+			};
+
+			xhr.send('flights=' + JSON.stringify(flights));
 		}
 	</script>
 </body>

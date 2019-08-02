@@ -1,8 +1,6 @@
 <?php
 namespace TripBuilder;
 use PDO;
-use DateTime;
-use Exception;
 
 /**
  * Database access (compatible with SQLite, MySQL, PostgreSQL, MS SQL Server, Oracle...)
@@ -20,7 +18,7 @@ class DataAccess
 			PDO::ATTR_EMULATE_PREPARES => false,
 			PDO::ATTR_STRINGIFY_FETCHES => false]);
 
-		$sql = 'select * from Flight where DepartureAirport=? and ArrivalAirport=? and DepartureTime >= ?';
+		$sql = 'select * from Flight where ID=?';
 		$this->preparedStatement = $this->pdo->prepare($sql);
 
 		if ($this->preparedStatement == false)  // or null
@@ -31,36 +29,34 @@ class DataAccess
 		}
 	}
 
+	public function getFlight($id)
+	{
+		$this->preparedStatement->bindValue(1, $id, PDO::PARAM_STR);
+		$this->preparedStatement->execute();
+
+		$row = $this->preparedStatement->fetch(PDO::FETCH_ASSOC);
+		$this->preparedStatement->closeCursor();
+		return $row;
+	}
+
 	/**
 	 * Get flights corresponding with criteria.
 	 * @param string $airport_departure
 	 * @param string $airport_arrival
-	 * @param int $time_departure 7am=700 2:30pm=1430 midnight=0
 	 * @return object[] Flights informations
 	 */
-	public function getFlights($airport_departure, $airport_arrival, $time_departure)
+	public function getFlights($airport_departure, $airport_arrival)
 	{
-		$this->preparedStatement->bindValue(1, $airport_departure, PDO::PARAM_STR);
-		$this->preparedStatement->bindValue(2, $airport_arrival, PDO::PARAM_STR);
-		$this->preparedStatement->bindValue(3, $time_departure, PDO::PARAM_INT);
-		$this->preparedStatement->execute();
+		$statement = $this->pdo->prepare(
+			'select Flight.ID, Airline.Name, Flight.DepartureTime, Flight.ArrivalTime, Flight.Price'
+			. ' from Flight inner join Airline on Flight.Airline=Airline.Code'
+			. ' where DepartureAirport=? and ArrivalAirport=? order by DepartureTime');
 
-		return $this->preparedStatement->fetchAll(PDO::FETCH_OBJ);
-	}
+		$statement->bindValue(1, $airport_departure, PDO::PARAM_STR);
+		$statement->bindValue(2, $airport_arrival, PDO::PARAM_STR);
+		$statement->execute();
 
-	public function getFlight($id)
-	{
-		static $prepared_statement = false;
-
-		if (!$prepared_statement)
-		{ $prepared_statement = $this->pdo->prepare('select * from Flight where ID=?'); }
-
-		$prepared_statement->bindValue(1, $id, PDO::PARAM_STR);
-		$prepared_statement->execute();
-
-		$row = $prepared_statement->fetch(PDO::FETCH_ASSOC);
-		$prepared_statement->closeCursor();
-		return $row;
+		return $statement->fetchAll(PDO::FETCH_OBJ);
 	}
 
 	/**
@@ -100,18 +96,6 @@ class DataAccess
 		$prepared_statement->execute();
 	}
 
-	static function intToDateTime($date, $time)
-	{
-		if (strlen($date) != 8)
-		{ throw new Exception("Invalid DateTime: $date $time"); }
-
-		$time = str_pad($time, 4, '0', STR_PAD_LEFT);
-
-		return new DateTime(
-			substr($date,0,4) . '-' . substr($date,4,2) . '-' . substr($date,-2)
-			. ' ' . substr($time,0,2) . ':' . substr($time,-2) . ':00');
-	}
-
 	/**
 	 * Initialize tables for the first time.
 	 */
@@ -137,15 +121,15 @@ class DataAccess
 			. 'Airline char(2) not null,'
 			. 'Number int not null,'
 			. 'DepartureAirport char(3) not null,'
-			. 'DepartureTime smallint not null,'
+			. 'DepartureTime char(5) not null,'
 			. 'ArrivalAirport char(3) not null,'
-			. 'ArrivalTime smallint not null,'
+			. 'ArrivalTime char(5) not null,'
 			. 'Price varchar(255) not null)');
 
 		$this->pdo->exec('create table Trip ('
 			. 'CreationTime int not null,'
 			. 'FlightID varchar not null,'
-			. 'DateDeparture int not null)');
+			. 'DateDeparture char(10) not null)');
 	}
 
 	/**
@@ -178,14 +162,14 @@ class DataAccess
 		$this->pdo->exec("insert into Airport values ('ORY','PAR','Paris-Orly',"
 			. "'Paris','FR','FR','48.72333','2.37944','Europe/Paris')");
 
-		$this->pdo->exec("insert into Flight values ('AC301','AC',301,'YUL',735,'YVR',1005,'273.23')");
-		$this->pdo->exec("insert into Flight values ('AC302','AC',302,'YVR',1130,'YUL',1911,'220.63')");
-		$this->pdo->exec("insert into Flight values ('AF351','AF',351,'YYZ',1845,'CDG',815,'446.78')");
-		$this->pdo->exec("insert into Flight values ('AF356','AF',356,'CDG',1425,'YYZ',1650,'446.78')");
-		$this->pdo->exec("insert into Flight values ('AC881','AC',881,'CDG',1130,'YYZ',1340,'252.84')");
-		$this->pdo->exec("insert into Flight values ('AC7968','AC',7968,'YTZ',1515,'YUL',1625,'152.80')");
-		$this->pdo->exec("insert into Flight values ('AC870','AC',870,'YUL',2100,'CDG',845,'252.80')");
-		$this->pdo->exec("insert into Flight values ('PD946','PD',946,'BOS',1730,'YTZ',1929,'314.02')");
-		$this->pdo->exec("insert into Flight values ('PD947','PD',947,'YTZ',1630,'BOS',1805,'314.02')");
+		$this->pdo->exec("insert into Flight values ('AC301','AC',301,'YUL','07:35','YVR','10:05','273.23')");
+		$this->pdo->exec("insert into Flight values ('AC302','AC',302,'YVR','11:30','YUL','19:11','220.63')");
+		$this->pdo->exec("insert into Flight values ('AF351','AF',351,'YYZ','18:45','CDG','08:15','446.78')");
+		$this->pdo->exec("insert into Flight values ('AF356','AF',356,'CDG','14:25','YYZ','16:50','446.78')");
+		$this->pdo->exec("insert into Flight values ('AC881','AC',881,'CDG','11:30','YYZ','13:40','252.84')");
+		$this->pdo->exec("insert into Flight values ('AC7968','AC',7968,'YTZ','15:15','YUL','16:25','152.80')");
+		$this->pdo->exec("insert into Flight values ('AC870','AC',870,'YUL','21:00','CDG','08:45','252.80')");
+		$this->pdo->exec("insert into Flight values ('PD946','PD',946,'BOS','17:30','YTZ','19:29','314.02')");
+		$this->pdo->exec("insert into Flight values ('PD947','PD',947,'YTZ','16:30','BOS','18:05','314.02')");
 	}
 }

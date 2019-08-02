@@ -3,14 +3,12 @@
  * RESTful web service to list flights available.
  * param from: Code departure airport
  * param to: Code arrival airport
- * param time: Departure time in 24 hours format
  * return: JSON
  * @api
- * @example http://localhost:8000/api/list_flights.php?from=YUL&to=YVR&time=0700
+ * @example http://localhost:8000/api/list_flights.php?from=YUL&to=YVR
  */
 $from = filter_input(INPUT_GET, 'from');
 $to = filter_input(INPUT_GET, 'to');
-$time = filter_input(INPUT_GET, 'time');
 header('Content-type: application/json');
 
 spl_autoload_register(function($class_name) {
@@ -22,7 +20,7 @@ register_shutdown_function('TripBuilder\\TripBuilder::phpErrorHandler');
 try
 {
 	$trip = new TripBuilder\TripBuilder();
-	echo json_encode($trip->listFlights($from, $to, $time));
+	echo json_encode($trip->listFlights($from, $to));
 }
 catch (Exception $ex)
 {

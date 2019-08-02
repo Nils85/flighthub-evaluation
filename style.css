@@ -5,8 +5,18 @@ body, a {
 a:hover {
 	text-decoration: underline}
 
-p {
+p, div {
 	padding: 9px}
+
+table {
+	border-collapse: collapse;
+	margin: 20px}
+
+table, th, td {
+	border: 1px solid black;
+	padding: 5px;
+	text-align: center}
+
 
 p.z {
 	background-color: black;
@@ -15,3 +25,9 @@ p.z {
 p.z a {
 	margin-left: 15%;
 	color: white}
+
+p.y {
+	text-align: center}
+
+div input.z {
+	margin: 25px}

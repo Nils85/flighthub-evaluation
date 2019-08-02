@@ -22,16 +22,14 @@ class TripBuilder
 	 * List available daily flights.
 	 * @param string $airport_departure Code of daparture airport
 	 * @param string $airport_arrival Code of arrival airport
-	 * @param string $time_departure 7am="0700" 2:30pm="1430" midnight="0000"
 	 * @return object[]
 	 */
-	public function listFlights($airport_departure, $airport_arrival, $time_departure)
+	public function listFlights($airport_departure, $airport_arrival)
 	{
-		if ($airport_departure == '' || $airport_arrival == '' || $time_departure == '')
+		if ($airport_departure == '' || $airport_arrival == '')
 		{ throw new Exception('all parameters are needed'); }
 
-		return $this->dao->getFlights(
-			$airport_departure, $airport_arrival, (int)ltrim($time_departure, '0'));
+		return $this->dao->getFlights($airport_departure, $airport_arrival);
 	}
 
 	/**
@@ -77,8 +75,8 @@ class TripBuilder
 			break;
 		}
 
-		$departure = DataAccess::intToDateTime(
-			$flights[$first_flight], $this->dao->getFlight($first_flight)['DepartureTime']);
+		$departure = new DateTime(
+			$flights[$first_flight] . ' '. $this->dao->getFlight($first_flight)['DepartureTime']);
 
 		if ($departure <= $creation_time)
 		{ return 'Too late! Your first flight is already gone.';}

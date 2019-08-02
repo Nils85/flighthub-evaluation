@@ -4,25 +4,173 @@
 	<title>Trip Builder</title>
 	<meta charset="UTF-8">
 	<link rel="stylesheet" type="text/css" href="style.css"/>
-	<script defer src="ES5.js"></script>
 </head>
 <body>
 	<p class="z">
 		<b>Trip Builder</b>
-		<a href="index.html" style="text-decoration:underline">Book flight(s)</a>
-		<a href="trips.html">Trip list</a>
+		<a href="index.html" style="text-decoration:underline">Book a trip</a>
+		<a href="trips.html">View Trips</a>
 		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug"><i>Debug</i></a>
 	</p>
-	<p>
-		<label for="a1">From:</label>
-		<select id="a1" onchange="fillListAirports('b1',this.value.substr(0,3))">
-			<option value="">Select an airport</option>
-		</select>
-		<label for="b1">To:</label>
-		<select id="b1"></select>
-		<label for="c1">Date:</label>
-		<input type="text" id="c1"/>
-		<input type="button" value="See daily flights" onclick=""/>
+	<div>
+		<label for="a1">From:</label><select id="a1" onchange="fillAirports('a2',this.value)"></select>
+		<label for="a2">To:</label><select id="a2" onchange="showFlights('a')"></select>
+		<label for="a3">Date:</label><input id="a3" type="text" value="2019-12-31"/>
+		<table id="a4"></table>
+		<input type="button" value="Add another flight" onclick="addFlight('b','a2',this)" class="z"/>
+	</div>
+	<div id ="b" style="display:none">
+		<label for="b1">From:</label><select id="b1" onchange="fillAirports('b2',this.value)"></select>
+		<label for="b2">To:</label><select id="b2" onchange="showFlights('b')"></select>
+		<label for="b3">Date:</label><input id="b3" type="text" value="2019-12-31"/>
+		<table id="b4"></table>
+		<input type="button" value="Add another flight" onclick="addFlight('c','b2',this)" class="z"/>
+	</div>
+	<div id ="c" style="display:none">
+		<label for="c1">From:</label><select id="c1" onchange="fillAirports('c2',this.value)"></select>
+		<label for="c2">To:</label><select id="c2" onchange="showFlights('c')"></select>
+		<label for="c3">Date:</label><input id="c3" type="text" value="2019-12-31"/>
+		<table id="c4"></table>
+		<input type="button" value="Add another flight" onclick="addFlight('d','c2',this)" class="z"/>
+	</div>
+	<div id ="d" style="display:none">
+		<label for="d1">From:</label><select id="d1" onchange="fillAirports('d2',this.value)"></select>
+		<label for="d2">To:</label><select id="d2" onchange="showFlights('d')"></select>
+		<label for="d3">Date:</label><input id="d3" type="text" value="2019-12-31"/>
+		<table id="d4"></table>
+		<input type="button" value="Add another flight" onclick="addFlight('e','d2',this)" class="z"/>
+	</div>
+	<div id ="e" style="display:none">
+		<label for="e1">From:</label><select id="e1" onchange="fillAirports('e2',this.value)"></select>
+		<label for="e2">To:</label><select id="e2" onchange="showFlights('e')"></select>
+		<label for="e3">Date:</label><input id="e3" type="text" value="2019-12-31"/>
+		<table id="e4"></table>
+	</div>
+	<p class="y">
+		<input type="button" value="Book selected flights" onclick=""/>
 	</p>
+	<script>
+		'use strict';  // ES5
+
+		initAirports();
+
+		function initAirports()
+		{
+			var selectA = document.getElementById('a1');
+			var selectB = document.getElementById('b1');
+			var selectC = document.getElementById('c1');
+			var selectD = document.getElementById('d1');
+			var selectE = document.getElementById('e1');
+
+			var xhr = new XMLHttpRequest();
+			var htm = '<option value="">Select an airport for departure...</option>';
+
+			xhr.open('GET', '/api/list_airports.php', true);
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200)
+				{
+					var list = JSON.parse(this.responseText);
+
+					for (var item of list)
+					{ htm += '<option value="' + item.substr(0,3) + '">' + item + '</option>'; }
+
+					selectA.innerHTML = htm;
+					selectB.innerHTML = htm;
+					selectC.innerHTML = htm;
+					selectD.innerHTML = htm;
+					selectE.innerHTML = htm;
+				}
+			};
+
+			xhr.send();
+		}
+
+		function fillAirports(id, from)
+		{
+			var select = document.getElementById(id);
+			var xhr = new XMLHttpRequest();
+			var htm = '<option value="">Select an airport for arrival...</option>';
+
+			xhr.open('GET', '/api/list_airports.php?from=' + from, true);
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200)
+				{
+					var list = JSON.parse(this.responseText);
+
+					for (var item of list)
+					{ htm += '<option value="' + item.substr(0,3) + '">' + item + '</option>'; }
+
+					select.innerHTML = htm;
+				}
+			};
+
+			xhr.send();
+		}
+
+		function selectAirport(id, value)
+		{
+			var select = document.getElementById(id);
+			var opts = select.options;
+
+			for (var i=0; true; i++)
+			{
+				if (opts[i].value === value)
+				{
+				  select.selectedIndex = i;
+				  break;
+				}
+			}
+		}
+
+		function addFlight(pID, airportID, button)
+		{
+			var airport = document.getElementById(airportID).value;
+			document.getElementById(pID).style.removeProperty('display');
+
+			if (airport !== '')
+			{
+				selectAirport(pID + '1', airport);
+				fillAirports(pID + '2', airport);
+			}
+
+			button.style.display = 'none';
+		}
+
+		function showFlights(divID)
+		{
+			var from = document.getElementById(divID + '1').value;
+			var to = document.getElementById(divID + '2').value;
+			var table = document.getElementById(divID + '4');
+			var xhr = new XMLHttpRequest();
+			var htm = '<thead><tr><td>Choose a flight</td><td>Airline company</td>'
+				+ '<td>Departure</td><td>Arrival</td><td>Price</td></tr></thead><tbody>';
+
+			xhr.open('GET', '/api/list_flights.php?from=' + from + '&to=' + to, true);
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200)
+				{
+					var flights = JSON.parse(this.responseText);
+
+					for (var flight of flights)
+					{
+						htm += '<tr><td><input type="radio" name="flight_' + divID
+							+ '" value="' + flight.ID
+							+ '">Flight ' + flight.ID
+							+ '</td><td>' + flight.Name
+							+ '</td><td>' + flight.DepartureTime
+							+ '</td><td>' + flight.ArrivalTime
+							+ '</td><td>' + flight.Price + '</td></tr>';
+					}
+
+					table.innerHTML = htm + '</tbody>';
+				}
+			};
+
+			xhr.send();
+		}
+	</script>
 </body>
 </html>

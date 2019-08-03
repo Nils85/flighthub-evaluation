@@ -96,6 +96,38 @@ class DataAccess
 		$prepared_statement->execute();
 	}
 
+	public function getTrips($order)
+	{
+		$order_by = 'Trip.CreationTime, Trip.DateDeparture, Flight.DepartureTime';  // Default
+
+		switch ($order)
+		{
+			case 'flight': $order_by = 'Trip.FlightID'; break;
+			case 'airline': $order_by = 'Airline.Name, Trip.FlightID'; break;
+			case 'departure_date': $order_by = 'Trip.DateDeparture, Flight.DepartureTime'; break;
+			case 'departure_time': $order_by = 'Flight.DepartureTime'; break;
+			case 'departure_airport': $order_by = 'Flight.DepartureAirport'; break;
+			case 'departure_city': $order_by = 'Airport1.City'; break;
+			case 'arrival_time': $order_by = 'Flight.ArrivalTime'; break;
+			case 'arrival_airport': $order_by = 'Flight.ArrivalAirport'; break;
+			case 'arrival_city': $order_by = 'Airport2.City'; break;
+			case 'price': $order_by = 'Flight.Price'; break;
+		}
+
+		$statement = $this->pdo->query("select Trip.CreationTime, Trip.FlightID,"
+			. " Airline.Name as 'Airline', Trip.DateDeparture, Flight.DepartureTime, Flight.DepartureAirport,"
+			. " Airport1.Name as 'DepartureAirportName', Airport1.City as 'DepartureCity', Flight.ArrivalTime,"
+			. " Flight.ArrivalAirport, Airport2.Name as 'ArrivalAirportName', Airport2.City as 'ArrivalCity',"
+			. " Flight.Price from Trip"
+			. " inner join Flight on Trip.FlightID = Flight.ID"
+			. " inner join Airline on Flight.Airline = Airline.Code"
+			. " inner join Airport as Airport1 on Flight.DepartureAirport = Airport1.Code"
+			. " inner join Airport as Airport2 on Flight.ArrivalAirport = Airport2.Code"
+			. " order by $order_by");
+
+		return $statement->fetchAll(PDO::FETCH_OBJ);
+	}
+
 	/**
 	 * Initialize tables for the first time.
 	 */
@@ -159,17 +191,14 @@ class DataAccess
 		$this->pdo->exec("insert into Airport values ('CDG','PAR','Paris-Charles de Gaulle',"
 			. "'Paris','FR','FR','49.01280','2.55000','Europe/Paris')");
 
-		$this->pdo->exec("insert into Airport values ('ORY','PAR','Paris-Orly',"
-			. "'Paris','FR','FR','48.72333','2.37944','Europe/Paris')");
-
 		$this->pdo->exec("insert into Flight values ('AC301','AC',301,'YUL','07:35','YVR','10:05','273.23')");
 		$this->pdo->exec("insert into Flight values ('AC302','AC',302,'YVR','11:30','YUL','19:11','220.63')");
-		$this->pdo->exec("insert into Flight values ('AF351','AF',351,'YYZ','18:45','CDG','08:15','446.78')");
-		$this->pdo->exec("insert into Flight values ('AF356','AF',356,'CDG','14:25','YYZ','16:50','446.78')");
+		$this->pdo->exec("insert into Flight values ('AF351','AF',351,'YYZ','18:45','CDG','08:15','447.78')");
+		$this->pdo->exec("insert into Flight values ('AF356','AF',356,'CDG','14:25','YYZ','16:50','445.78')");
 		$this->pdo->exec("insert into Flight values ('AC881','AC',881,'CDG','11:30','YYZ','13:40','252.84')");
 		$this->pdo->exec("insert into Flight values ('AC7968','AC',7968,'YTZ','15:15','YUL','16:25','152.80')");
 		$this->pdo->exec("insert into Flight values ('AC870','AC',870,'YUL','21:00','CDG','08:45','252.80')");
-		$this->pdo->exec("insert into Flight values ('PD946','PD',946,'BOS','17:30','YTZ','19:29','314.02')");
-		$this->pdo->exec("insert into Flight values ('PD947','PD',947,'YTZ','16:30','BOS','18:05','314.02')");
+		$this->pdo->exec("insert into Flight values ('PD946','PD',946,'BOS','17:30','YTZ','19:29','314.04')");
+		$this->pdo->exec("insert into Flight values ('PD947','PD',947,'YTZ','16:30','BOS','18:05','314.00')");
 	}
 }

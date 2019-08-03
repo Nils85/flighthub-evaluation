@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Trip Builder</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+	<p class="z">
+		<b>Trip Builder</b>
+		<a href="index.html">Book a new trip</a>
+		<a href="trips.html" style="text-decoration:underline">Trip listing</a>
+		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug"><i>Debug API</i></a>
+	</p>
+	<table>
+		<thead>
+			<tr>
+				<th><a href="#" onclick="showFlights('creation')">Creation time</a></th>
+				<th><a href="#" onclick="showFlights('flight')">Flight</a></th>
+				<th><a href="#" onclick="showFlights('airline')">Airline company</a></th>
+				<th><a href="#" onclick="showFlights('departure_date')">Date departure</a></th>
+				<th><a href="#" onclick="showFlights('departure_time')">Time departure</a></th>
+				<th><a href="#" onclick="showFlights('departure_airport')">Airport departure</a></th>
+				<th><a href="#" onclick="showFlights('departure_city')">City departure</a></th>
+				<th><a href="#" onclick="showFlights('arrival_time')">Time arrival</a></th>
+				<th><a href="#" onclick="showFlights('arrival_airport')">Airport arrival</a></th>
+				<th><a href="#" onclick="showFlights('arrival_city')">City arrival</a></th>
+				<th><a href="#" onclick="showFlights('price')">Price</a></th>
+			</tr>
+		</thead>
+		<tbody id="a">
+		</tbody>
+	</table>
+	<script>
+		'use strict';  // ES5
+
+		showFlights('creation');
+
+		function showFlights(sort)
+		{
+			var tbody = document.getElementById('a');
+			var xhr = new XMLHttpRequest();
+			var htm = '';
+
+			xhr.open('GET', '/api/list_trips.php?sort=' + sort, true);
+
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState === 4 && xhr.status === 200)
+				{
+					var trips = JSON.parse(this.responseText);
+
+					for (var index in trips)
+					{
+						var trip = trips[index];
+						htm += '<tr><td>' + trip.CreationTime
+							+ '</td><td>' + trip.FlightID
+							+ '</td><td>' + trip.Airline
+							+ '</td><td>' + trip.DateDeparture
+							+ '</td><td>' + trip.DepartureTime
+							+ '</td><td>' + trip.DepartureAirport + ' ' + trip.DepartureAirportName
+							+ '</td><td>' + trip.DepartureCity
+							+ '</td><td>' + trip.ArrivalTime
+							+ '</td><td>' + trip.ArrivalAirport + ' ' + trip.ArrivalAirportName
+							+ '</td><td>' + trip.ArrivalCity
+							+ '</td><td>' + trip.Price
+							+ '</td></tr>';
+					}
+
+					tbody.innerHTML = htm;
+				}
+			};
+
+			xhr.send();
+		}
+	</script>
+</body>
+</html>

@@ -89,6 +89,11 @@ class TripBuilder
 		return 'Ok, your trip number is ' . $creation_time . '. Total price=' . $price;
 	}
 
+	public function listTrips($sortColumn ='')
+	{
+		return $this->dao->getTrips($sortColumn);
+	}
+
 	static function phpErrorHandler()
 	{
 		if (error_get_last() != null)

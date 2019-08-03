@@ -8,9 +8,9 @@
 <body>
 	<p class="z">
 		<b>Trip Builder</b>
-		<a href="index.html" style="text-decoration:underline">Book a trip</a>
-		<a href="trips.html">View Trips</a>
-		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug"><i>Debug</i></a>
+		<a href="index.html" style="text-decoration:underline">Book a new trip</a>
+		<a href="trips.html">Trip listing</a>
+		<a href="debug.php?XDEBUG_SESSION_START=netbeans-xdebug"><i>Debug API</i></a>
 	</p>
 	<div>
 		<label for="a1">From:</label><select id="a1" onchange="fillAirports('a2',this.value)"></select>
@@ -47,7 +47,7 @@
 		<table id="e4"></table>
 	</div>
 	<p class="y">
-		<input type="button" value="Book selected flights" onclick="bookTrip()"/>
+		<input type="button" value="BOOK SELECTED FLIGHTS" onclick="bookTrip()"/>
 		<span id="f"></span>
 	</p>
 	<script>
@@ -145,8 +145,8 @@
 			var to = document.getElementById(divID + '2').value;
 			var table = document.getElementById(divID + '4');
 			var xhr = new XMLHttpRequest();
-			var htm = '<thead><tr><td>Choose a flight</td><td>Airline company</td>'
-				+ '<td>Departure</td><td>Arrival</td><td>Price</td></tr></thead><tbody>';
+			var htm = '<thead><tr><th>Choose a flight</th><th>Airline company</th>'
+				+ '<th>Departure</th><th>Arrival</th><th>Price</th></tr></thead><tbody>';
 
 			xhr.open('GET', '/api/list_flights.php?from=' + from + '&to=' + to, true);
 

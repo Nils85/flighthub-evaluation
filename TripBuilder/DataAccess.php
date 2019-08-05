@@ -149,9 +149,9 @@ class DataAccess
 			. 'Timezone varchar(255) not null)');
 
 		$this->pdo->exec('create table Flight ('
-			. 'ID varchar(255) primary key,'
+			. 'ID varchar(7) primary key,'
 			. 'Airline char(2) not null,'
-			. 'Number int not null,'
+			. 'Number smallint not null,'
 			. 'DepartureAirport char(3) not null,'
 			. 'DepartureTime char(5) not null,'
 			. 'ArrivalAirport char(3) not null,'

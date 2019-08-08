@@ -98,7 +98,7 @@ class TripBuilder
 	{
 		if (error_get_last() != null)
 		{
-			http_response_code(500);
+			header('Content-Type: text/plain', true, 500);
 			echo 'Internal Server Error';
 		}
 	}

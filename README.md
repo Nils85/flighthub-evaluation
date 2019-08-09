@@ -7,7 +7,7 @@ PHP Coding Assignment
 - Download PHP for your OS (version 5.6 minimum)
 - Install PHP and enable the PDO driver for SQLite
 - Open a terminal (or command prompt) and type :  
-`cd ~/trip-builder` move in the directory of the project  
+`cd ~/trip-builder/www` move in the directory of the project  
 `php -S localhost:8000`
 - Go to http://localhost:8000 with your browser.
 - You have nothing else to do if you use SQLite!

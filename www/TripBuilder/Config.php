@@ -1,7 +1,7 @@
 <?php
 namespace TripBuilder;
 
-# WEB SERVICES CONFIGURATION
+# Web services configuration
 class Config {
 const
 
@@ -13,7 +13,7 @@ DB_SOURCE = 'sqlite:../TripBuilder.db',
 # MS SQL Server -> 'sqlsrv:Server=localhost,1521;Database=TripBuilder'
 # PostgreSQL ----> 'pgsql:host=localhost;port=5432;dbname=TripBuilder'
 # Oracle DB -----> 'oci:dbname=//localhost:1521/TripBuilder'
-# SQLite --------> 'sqlite:C:/Users/Vince/Desktop/TripBuilder.db'
+# SQLite 3 ------> 'sqlite:C:/Users/Vince/Desktop/TripBuilder.db'
 
 # Connection to database
 DB_USERNAME = 'root',

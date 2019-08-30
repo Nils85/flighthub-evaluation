@@ -5,7 +5,7 @@ body, a {
 a:hover {
 	text-decoration: underline}
 
-p, div {
+p, form, div {
 	padding: 9px}
 
 table {

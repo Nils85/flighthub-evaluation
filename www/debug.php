@@ -27,12 +27,12 @@
 		List available flights<br/>
 		<label for="txtbox1">From:</label><input type="text" id="txtbox1" name="from" value="YUL"/>
 		<label for="txtbox2">To:</label><input type="text" id="txtbox2" name="to" value="YVR"/>
-		<br/><input type="submit"/>
+		<input type="submit"/>
 	</form>
 	<form action="api/book_trip.php" method="post" enctype="multipart/form-data">
 		<b>api/book_trip.php</b><br/>
 		<label for="txtbox0">Book a trip (POST JSON)</label><br/>
-		<textarea id="txtbox0" name="flights">[{"flight":"AC301","date":"2019-09-29"},{"flight":"AC302","date":"2019-09-30"}]</textarea>
+		<textarea style="width:500px" id="txtbox0" name="flights">[{"flight":"AC301","date":"2019-09-29"},{"flight":"AC302","date":"2019-09-30"}]</textarea>
 		<br/><input type="submit"/>
 	</form>
 	<p>

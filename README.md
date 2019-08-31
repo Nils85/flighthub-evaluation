@@ -8,7 +8,7 @@ You can try this project locally on your computer or install it on a usual web s
 
 ## Installation on your computer
 
-- Download PHP (version 5.6 minimum) for your OS
+- Download PHP 7 for your OS
 - Install PHP and enable the PDO driver for SQLite in "php.ini"
 - [Download the master branch of this project](https://bitbucket.org/Nils85/trip-builder/downloads/?tab=branches)
 - Open a terminal (or command prompt) and type :  
@@ -18,13 +18,13 @@ You can try this project locally on your computer or install it on a usual web s
 
 ## Installation on a web server
 
-- Set up a server with Apache or Nginx + PHP
+- Set up a server with Apache or Nginx and PHP version 5.4 minimum
 - Install a database system like MySQL, Postgres, MS SQL Server, Oracle...
 - Enable the PDO driver for your database
 - Create manually the database that will be used by the project (without tables)
 - `git clone https://bitbucket.org/Nils85/trip-builder.git`
 - Modify the file "TripBuilder/Config.php" with your database parameters
-- Deploy the folder "www" to your web server directory (htdocs)
+- Deploy the folder "trip-builder/www" to your web server directory (htdocs)
 - Open a browser and go to the web directory of your web server
 
 ## Web services documentation
